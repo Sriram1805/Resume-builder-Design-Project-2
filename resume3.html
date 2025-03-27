@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Builder</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 800px;
+        }
+        .form-container {
+            width: 100%;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #ddd;
+        }
+        .preview-container {
+            width: 100%;
+            margin-top: 20px;
+        }
+        h2, h3 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin: 5px 0;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 5px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .resume {
+            background: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+        }
+        .print-btn {
+            margin-top: 10px;
+            background: #1A91F0;
+            color: white;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            width: 100%;
+        }
+
+        /* Hide form while printing */
+        @media print {
+            .form-container, .print-btn {
+                display: none;
+            }
+            .resume {
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Form Section -->
+    <div class="form-container">
+        <h2>Enter Your Details</h2>
+        <label>Name:</label>
+        <input type="text" id="name" oninput="updatePreview()">
+        
+        <label>Job Title:</label>
+        <input type="text" id="title" oninput="updatePreview()">
+        
+        <label>Phone:</label>
+        <input type="text" id="phone" oninput="updatePreview()">
+        
+        <label>LinkedIn:</label>
+        <input type="text" id="linkedin" oninput="updatePreview()">
+        
+        <label>Email:</label>
+        <input type="email" id="email" oninput="updatePreview()">
+        
+        <label>Summary:</label>
+        <textarea id="summary" oninput="updatePreview()"></textarea>
+
+        <!-- Achievements Section -->
+        <h3>Achievements</h3>
+        <label>Achievement Title:</label>
+        <input type="text" id="achieveTitle" oninput="updatePreview()">
+        
+        <label>Achievement Description:</label>
+        <input type="text" id="achieveDescription" oninput="updatePreview()">
+        
+        <!-- Experience Section -->
+        <h3>Experience</h3>
+        <label>Job Title:</label>
+        <input type="text" id="expTitle" oninput="updatePreview()">
+        
+        <label>Company & Location:</label>
+        <input type="text" id="expCompany" oninput="updatePreview()">
+        
+        <label>Duration:</label>
+        <input type="text" id="expDuration" oninput="updatePreview()">
+        
+        <label>Description:</label>
+        <textarea id="expDescription" oninput="updatePreview()"></textarea>
+
+        <!-- Education Section -->
+        <h3>Education</h3>
+        <label>Degree:</label>
+        <input type="text" id="eduDegree" oninput="updatePreview()">
+        
+        <label>University:</label>
+        <input type="text" id="eduUniversity" oninput="updatePreview()">
+        
+        <label>Year:</label>
+        <input type="text" id="eduYear" oninput="updatePreview()">
+        
+        <!-- Skills Section -->
+        <h3>Skills</h3>
+        <textarea id="skills" oninput="updatePreview()"></textarea>
+    </div>
+
+    <!-- Resume Preview Section -->
+    <div class="preview-container">
+        <div class="resume" id="resumePreview">
+            <h1 id="previewName">Your Name</h1>
+            <h3 id="previewTitle">Job Title</h3>
+            <p><strong>Phone:</strong> <span id="previewPhone"></span></p>
+            <p><strong>LinkedIn:</strong> <span id="previewLinkedIn"></span></p>
+            <p><strong>Email:</strong> <span id="previewEmail"></span></p>
+            <p id="previewSummary"></p>
+            
+            <!-- Achievements Preview -->
+            <h3>Achievements</h3>
+            <p><strong id="previewAchieveTitle"></strong></p>
+            <p id="previewAchieveDescription"></p>
+
+            <!-- Experience Preview -->
+            <h3>Experience</h3>
+            <p><strong id="previewExpTitle"></strong></p>
+            <p id="previewExpCompany"></p>
+            <p id="previewExpDescription"></p>
+            
+            <!-- Education Preview -->
+            <h3>Education</h3>
+            <p><strong id="previewEduDegree"></strong></p>
+            <p id="previewEduUniversity"></p>
+            
+            <!-- Skills Preview -->
+            <h3>Skills</h3>
+            <p id="previewSkills"></p>
+        </div>
+
+        <button class="print-btn" onclick="printCV()">Print CV</button>
+    </div>
+</div>
+
+<script>
+    function updatePreview() {
+        document.getElementById("previewName").textContent = document.getElementById("name").value || "Your Name";
+        document.getElementById("previewTitle").textContent = document.getElementById("title").value || "Job Title";
+        document.getElementById("previewPhone").textContent = document.getElementById("phone").value || "Your Phone";
+        document.getElementById("previewLinkedIn").textContent = document.getElementById("linkedin").value || "Your LinkedIn";
+        document.getElementById("previewEmail").textContent = document.getElementById("email").value || "Your Email";
+        document.getElementById("previewSummary").textContent = document.getElementById("summary").value || "Your summary here...";
+        document.getElementById("previewAchieveTitle").textContent = document.getElementById("achieveTitle").value || "";
+        document.getElementById("previewAchieveDescription").textContent = document.getElementById("achieveDescription").value || "";
+        document.getElementById("previewExpTitle").textContent = document.getElementById("expTitle").value || "";
+        document.getElementById("previewExpCompany").textContent = document.getElementById("expCompany").value || "";
+        document.getElementById("previewExpDescription").textContent = document.getElementById("expDescription").value || "";
+        document.getElementById("previewEduDegree").textContent = document.getElementById("eduDegree").value || "";
+        document.getElementById("previewEduUniversity").textContent = document.getElementById("eduUniversity").value || "";
+        document.getElementById("previewSkills").textContent = document.getElementById("skills").value || "";
+    }
+
+    function printCV() {
+        window.print();
+    }
+</script>
+
+</body>
+</html>
